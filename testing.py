@@ -153,29 +153,27 @@ class computer_store:
         else:
             print(f"Part with ID {part_id} not found in inventory.")
 
-    def add_to_cart(self, part):
-        # Add a selected part or custom-built onent or a custom-built computer from the shopping cart
+    def add_to_cart(self, part_id):
         part = self.find_part_by_id(part_id)
         if part:
             # Add the part to the shopping cart
             self.shopping_cart.append({
                 'part_id': part_id,
-                'quantity': quantity,
-                'part_details': part  # You can store the details of the part in the cart
+                'part_details': part  # Store the details of the part in the cart
             })
-            print(f"Added {quantity} {part['item_type']}(s) to the cart.")
         else:
             print("Part not found in inventory.")
     
     def find_part_by_id(self, part_id):
         # logic to find and return part details based on part_id from the inventory
-        # Return the partdetails if found, otherwise return None
+        # Return the part details if found, otherwise return None
         for df in [self.df_cpu, self.df_gpu, self.df_ram, self.df_psu, self.df_motherboard, self.df_storage]:
-            part = df[df['item_id'] == part.id]
+            part = df[df['item_id'] == part_id]
             if not part.empty:
                 return part.to_dict(orient='records')[0]
-            
-            return None
+
+        return None  # Return None after checking all DataFrames
+
 
     def remove_from_cart(self, part):
         # Remove a component or a custom-built computer from the shopping cart
@@ -198,6 +196,7 @@ class computer_store:
         # Complete the purchase and checkout process
         # Consider the budget and compatibility before finalizing the purchase
         pass
+
 
 
 

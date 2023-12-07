@@ -175,9 +175,18 @@ class computer_store:
         return None  # Return None after checking all DataFrames
 
 
-    def remove_from_cart(self, part):
+    def remove_from_cart(self, part_id):
         # Remove a component or a custom-built computer from the shopping cart
-        pass
+        found = False
+        for item in self.shopping_cart:
+            if item['part_id'] == part_id:
+                self.shopping_cart.remove(item)
+                print(f"Part ID: {part_id} removed from the cart.")
+                found = True
+                break
+            
+            if not found:
+                print(f"Part ID: {part_id} not found in the cart.")
 
     def build_custom_computer(self, parts):
         # Build a custom computer with specified parts

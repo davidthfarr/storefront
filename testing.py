@@ -1,6 +1,7 @@
 #import pandas as pd
 #import json
 #author David Farr
+#07 Dec 23
 
 class computer_store:
 
@@ -184,7 +185,7 @@ class computer_store:
                 print(f"Part ID: {part_id} removed from the cart.")
                 found = True
                 break
-            
+
             if not found:
                 print(f"Part ID: {part_id} not found in the cart.")
 

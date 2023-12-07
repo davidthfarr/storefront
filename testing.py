@@ -1,6 +1,6 @@
 #import pandas as pd
 #import json
-
+#author David Farr
 
 class computer_store:
 

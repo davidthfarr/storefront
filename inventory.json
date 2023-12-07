@@ -1,0 +1,299 @@
+{
+    "inventory": [
+        {
+            "item": {
+                "id": "CPU_01",
+                "type": "CPU",
+                "name": "PyProcessor Thunderbolt",
+                "price": 100,
+                "power_draw": 400,
+                "socket": "LGA"
+            }
+        },
+        {
+            "item": {
+                "id": "CPU_02",
+                "type": "CPU",
+                "name": "CodeCruncher Turbo",
+                "price": 200,
+                "power_draw": 500,
+                "socket": "PGA"
+            }
+        },
+        {
+            "item": {
+                "id": "CPU_03",
+                "type": "CPU",
+                "name": "CompileCommander Quad",
+                "price": 300,
+                "power_draw": 600,
+                "socket": "LGA"
+            }
+        },
+        {
+            "item": {
+                "id": "CPU_04",
+                "type": "CPU",
+                "name": "LogicLeaper Hyper",
+                "price": 400,
+                "power_draw": 700,
+                "socket": "PGA"
+            }
+        },
+        {
+            "item": {
+                "id": "CPU_05",
+                "type": "CPU",
+                "name": "MegaMath Max",
+                "price": 500,
+                "power_draw": 800,
+                "socket": "LGA"
+            }
+        },
+        {
+            "item": {
+                "id": "GPU_01",
+                "type": "GPU",
+                "name": "GraphiGuru Explorer",
+                "price": 100,
+                "power_draw": 300,
+                "overclockable": false
+            }
+        },
+        {
+            "item": {
+                "id": "GPU_02",
+                "type": "GPU",
+                "name": "PixelProwess Xtreme",
+                "price": 200,
+                "power_draw": 400,
+                "overclockable": true
+            }
+        },
+        {
+            "item": {
+                "id": "GPU_03",
+                "type": "GPU",
+                "name": "RenderRanger Infinity",
+                "price": 300,
+                "power_draw": 500,
+                "overclockable": true
+            }
+        },
+        {
+            "item": {
+                "id": "GPU_04",
+                "type": "GPU",
+                "name": "VisionVoyager Pro",
+                "price": 400,
+                "power_draw": 600,
+                "overclockable": false
+            }
+        },
+        {
+            "item": {
+                "id": "GPU_05",
+                "type": "GPU",
+                "name": "FrameFury Ultimate",
+                "price": 500,
+                "power_draw": 700,
+                "overclockable": true
+            }
+        },
+        {
+            "item": {
+                "id": "RAM_01",
+                "type": "RAM",
+                "name": "MemoryMajesty 8GB",
+                "price": 100,
+                "power_draw": 5,
+                "capacity": 8
+            }
+        },
+        {
+            "item": {
+                "id": "RAM_02",
+                "type": "RAM",
+                "name": "SpeedSprint 16GB",
+                "price": 200,
+                "power_draw": 10,
+                "capacity": 16
+            }
+        },
+        {
+            "item": {
+                "id": "RAM_03",
+                "type": "RAM",
+                "name": "CacheKing 32GB",
+                "price": 400,
+                "power_draw": 20,
+                "capacity": 32
+            }
+        },
+        {
+            "item": {
+                "id": "RAM_04",
+                "type": "RAM",
+                "name": "QuickQuasar 64GB",
+                "price": 800,
+                "power_draw": 40,
+                "capacity": 64
+            }
+        },
+        {
+            "item": {
+                "id": "RAM_05",
+                "type": "RAM",
+                "name": "FlashForce 128GB",
+                "price": 1600,
+                "power_draw": 80,
+                "capacity": 128
+            }
+        },
+        {
+            "item": {
+                "id": "PSU_01",
+                "type": "PSU",
+                "name": "PowerPulse 950W",
+                "price": 100,
+                "power_supplied": 950
+            }
+        },
+        {
+            "item": {
+                "id": "PSU_02",
+                "type": "PSU",
+                "name": "VoltageVanguard 1500W",
+                "price": 200,
+                "power_supplied": 1500
+            }
+        },
+        {
+            "item": {
+                "id": "PSU_03",
+                "type": "PSU",
+                "name": "WattWizard 1200W",
+                "price": 150,
+                "power_supplied": 1200
+            }
+        },
+        {
+            "item": {
+                "id": "PSU_04",
+                "type": "PSU",
+                "name": "EnergyEmperor 2000W",
+                "price": 250,
+                "power_supplied": 2000
+            }
+        },
+        {
+            "item": {
+                "id": "PSU_05",
+                "type": "PSU",
+                "name": "CurrentConqueror 800W",
+                "price": 80,
+                "power_supplied": 800
+            }
+        },
+        {
+            "item": {
+                "id": "MB_01",
+                "type": "Motherboard",
+                "name": "MotherMainframe Elite",
+                "power_draw": 10,
+                "socket": "LGA",
+                "ram_slots": 4,
+                "price": 100
+            }
+        },
+        {
+            "item": {
+                "id": "MB_02",
+                "type": "Motherboard",
+                "name": "CircuitCaptain Supreme",
+                "power_draw": 15,
+                "socket": "PGA",
+                "ram_slots": 4,
+                "price": 200
+            }
+        },
+        {
+            "item": {
+                "id": "MB_03",
+                "type": "Motherboard",
+                "name": "BoardBoss Ultimate",
+                "power_draw": 20,
+                "socket": "LGA",
+                "ram_slots": 6,
+                "price": 300
+            }
+        },
+        {
+            "item": {
+                "id": "MB_04",
+                "type": "Motherboard",
+                "name": "SiliconSailor Extreme",
+                "power_draw": 25,
+                "socket": "PGA",
+                "ram_slots": 8,
+                "price": 400
+            }
+        },
+        {
+            "item": {
+                "id": "MB_05",
+                "type": "Motherboard",
+                "name": "ChipChampion Deluxe",
+                "power_draw": 30,
+                "socket": "LGA",
+                "ram_slots": 6,
+                "price": 500
+            }
+        },
+        {
+            "item": {
+                "id": "STORAGE_01",
+                "type": "Storage",
+                "name": "DataDepot 1TB",
+                "price": 100,
+                "capacity": 1000
+            }
+        },
+        {
+            "item": {
+                "id": "STORAGE_02",
+                "type": "Storage",
+                "name": "FileFortress 2TB",
+                "price": 200,
+                "capacity": 2000
+            }
+        },
+        {
+            "item": {
+                "id": "STORAGE_03",
+                "type": "Storage",
+                "name": "ByteBunker 4TB",
+                "price": 400,
+                "capacity": 4000
+            }
+        },
+        {
+            "item": {
+                "id": "STORAGE_04",
+                "type": "Storage",
+                "name": "ArchiveAviator 3TB",
+                "price": 300,
+                "capacity": 3000
+            }
+        },
+        {
+            "item": {
+                "id": "STORAGE_05",
+                "type": "Storage",
+                "name": "DiskDuke 6TB",
+                "price": 600,
+                "capacity": 6000
+            }
+        }
+    ]
+}

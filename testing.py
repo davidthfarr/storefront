@@ -84,7 +84,19 @@ class computer_store:
         else:
             print("Invalid choice. Please enter a number from 1 to 7.")
 
-    # Additional methods for menu options would go here
+    def help(self):
+        print('The following commands are accepted:')
+        print('help() - lists all available commands and their function')
+        print('list(category=optional)- List available part and all their attributes (ID, type, etc.) in the specified category')
+        print('details(part_id)- Show details of the specified part')
+        print('compatibility(part_id1,part_id2,..)- Check if compatibility between specified parts')
+        print('build(part_ids comma seperated)- Remove specified part or computer from current shopping carts')
+        print('compatibiility-build(none)- Check compatibility between all parts in current build configuration')
+        print('budget(amount)- set customers budget')
+        print('purchase(part_id)- Add the specified part to shopping cart')
+        print('cart(none)- View the current shopping cart')
+        print('checkout(none)- Complete the purchase and checkout')
+
 
     def display_cart(self, category=None):
         print("Shopping Cart:")

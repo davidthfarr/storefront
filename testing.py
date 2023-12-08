@@ -178,15 +178,28 @@ class computer_store:
             print(f"Part with ID {part_id} not found in inventory.")
 
     def purchase(self, part_id):
-        part = self.find_part_by_id(part_id)
+        part = self.find_part_by_id(part_id) # Call function to ID part
         if part:
-            # Add the part to the shopping cart
-            self.shopping_cart.append({
-                'part_id': part_id,
-                'part_details': part  # Store the details of the part in the cart
-            })
+            part_cost = part['price'] 
+
+            if self.customer:
+                if self.customer['budget'] >= part_cost:
+                    # Add the part to the shopping cart
+                    self.shopping_cart.append({
+                        'part_id': part_id,
+                        'part_details': part  # Store the details of the part in the cart
+                    })
+
+                    # Deduct the cost of the part from the customer's budget
+                    self.customer['budget'] -= part_cost
+                    print(f"Part ID: {part_id} added to the cart. Remaining budget: {self.customer['budget']}")
+                else:
+                    print("Insufficient budget to purchase this part.")
+            else:
+                print("Customer information is not available. Please set the customer's budget first.")
         else:
             print("Part not found in inventory.")
+
     
     def find_part_by_id(self, part_id):
         # logic to find and return part details based on part_id from the inventory
@@ -213,17 +226,67 @@ class computer_store:
                 print(f"Part ID: {part_id} not found in the cart.")
 
     def build(self, parts):
-        # Build a custom computer with specified parts
-        # Add the computer to the shopping cart
-        pass
+        required_parts = {
+            'Motherboard': 1,
+            'RAM': 1,
+            'CPU': 1,
+            'PSU': 1,
+            'Storage': 1,
+            'GPU': 0
+        }
+
+        part_count = {part_type: 0 for part_type in required_parts}
+        total_cost = 0
+        computer_parts = []
+        for part_id in parts.split(','):
+            part = self.find_part_by_id(part_id)
+            if part:
+                part_type = part['item_type']
+                if part_type in required_parts:
+                    part_count[part_type] += 1
+                    total_cost += part['price']
+                    computer_parts.append(part)
+        # Check if all required parts are present and within budget
+
+        requirements_met = True
+        missing_parts = []
+        customer_budget = self.customer.get('budget')
+
+        if customer_budget is None:
+            customer_budget = float('inf') # If no budget provided assume unlimited
+
+        for part_type, count in required_parts.items():
+            if part_count[part_type] < count:
+                requirements_met = False
+                missing_parts.append(f"{count - part_count[part_type]}")
+        
+        if requirements_met:
+            if total_cost <= customer_budget:
+                print("Custom computer can be built!")
+                self.shopping_cart.append({
+                    'computer_name': 'Custom',
+                    'parts': computer_parts,
+                    'total_cost': total_cost
+                })
+
+            
 
     def compatibility(self):
         # Check compatibility between components in the shopping cart
         pass
 
-    def budget(self, budget_amount):
-        # Set the budget for the current customer
-        pass
+    def budget(self):
+        # Allows a user to update their budget
+        if self.customer:
+            try:
+                new_budget = float(input("Please enter your new budget: "))
+                self.customer['budget'] = new_budget
+                print("Budget updated successfully!")
+            except ValueError:
+                print("Invalid input for the budget. Please enter a valid number.")
+        else:
+            print("Customer information not found. Please set customer information first.")
+
 
     def checkout(self):
         # Complete the purchase and checkout process

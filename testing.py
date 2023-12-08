@@ -55,6 +55,16 @@ class computer_store:
 
     def display_menu(self):
         print("Welcome to the Computer Store!")
+        print("To view available parts enter list(), optional category is category = cpu, gpu, psu, ram, motherboard or storage as a string.")
+        print("To view shopping cart enter cart()")
+        print("To build custom computer enter build(part_ids comma separated)")
+        print("Remove Item from Cart with remove(part_ids)")
+        print("Set Budget with budget(amount = int)")
+        print("Add to the shopping cart with purchase(part_id)")
+        print("View the shopping cart with cart()")
+        print("Complete the purchase and checkout with checkout()")
+
+        print("Please begin the process by selecting one of the below options to begin your experience!")
         print("1. View Available Parts")
         print("2. View Shopping Cart")
         print("3. Build Custom Computer")
@@ -63,19 +73,20 @@ class computer_store:
         print("6. Checkout")
         print("7. Exit")
 
+
         user_choice = input("Please enter your choice (1-7): ")
 
         # Process user input
         if user_choice == '1':
-            self.display_inventory()
+            self.list()
         elif user_choice == '2':
-            self.display_cart()
+            self.cart()
         elif user_choice == '3':
-            self.build_custom_computer_menu()
+            self.build()
         elif user_choice == '4':
-            self.remove_from_cart_menu()
+            self.remove()
         elif user_choice == '5':
-            self.set_budget_menu()
+            self.budget()
         elif user_choice == '6':
             self.checkout()
         elif user_choice == '7':
@@ -98,7 +109,7 @@ class computer_store:
         print('checkout(none)- Complete the purchase and checkout')
 
 
-    def display_cart(self, category=None):
+    def cart(self, category=None):
         print("Shopping Cart:")
         if not self.shopping_cart:
             print("Your cart is empty.")
@@ -109,7 +120,7 @@ class computer_store:
                 print(item['part_details'])
                 print("--------------")
 
-    def display_inventory(self, category=None):
+    def list(self, category=None):
         print("Available Parts:")
         if category is None:
             # Display all available parts if no specific category is specified
@@ -148,7 +159,7 @@ class computer_store:
                 print("---- Storage ----")
                 print(self.df_storage)
 
-    def display_details(self, part_id):
+    def details(self, part_id):
         # Check the DataFrames for the part based on its ID
         part = None
         category = None
@@ -166,7 +177,7 @@ class computer_store:
         else:
             print(f"Part with ID {part_id} not found in inventory.")
 
-    def add_to_cart(self, part_id):
+    def purchase(self, part_id):
         part = self.find_part_by_id(part_id)
         if part:
             # Add the part to the shopping cart
@@ -188,7 +199,7 @@ class computer_store:
         return None  # Return None after checking all DataFrames
 
 
-    def remove_from_cart(self, part_id):
+    def remove(self, part_id):
         # Remove a component or a custom-built computer from the shopping cart
         found = False
         for item in self.shopping_cart:
@@ -201,16 +212,16 @@ class computer_store:
             if not found:
                 print(f"Part ID: {part_id} not found in the cart.")
 
-    def build_custom_computer(self, parts):
+    def build(self, parts):
         # Build a custom computer with specified parts
         # Add the computer to the shopping cart
         pass
 
-    def check_compatibility(self):
+    def compatibility(self):
         # Check compatibility between components in the shopping cart
         pass
 
-    def set_budget(self, budget_amount):
+    def budget(self, budget_amount):
         # Set the budget for the current customer
         pass
 

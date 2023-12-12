@@ -271,9 +271,33 @@ class computer_store:
 
             
 
-    def compatibility(self):
-        # Check compatibility between components in the shopping cart
-        pass
+    def compatibility(self, build_parts):
+        # Extract component data from build_parts
+        motherboard = next((part for part in build_parts if part['part_type'] == 'Motherboard'), None)
+        cpu = next((part for part in build_parts if part['part_type'] == 'CPU'), None)
+        ram = [part for part in build_parts if part['part_type'] == 'RAM']
+        psu = next((part for part in build_parts if part['part_type'] == 'PSU'), None)
+
+        # Check compatibility rules
+        if motherboard and cpu and motherboard['socket'] != cpu['socket']:
+            print("Warning: Motherboard and CPU socket types are incompatible.")
+            return False
+
+        if len(set(part['id'] for part in ram)) != 1:
+            print("Warning: All instances of RAM should have the same ID.")
+            return False
+
+        if motherboard and len(ram) > motherboard['ram_slots']:
+            print("Warning: More RAM modules than available RAM slots on the motherboard.")
+            return False
+
+        total_power_draw = sum(part['power_draw'] for part in build_parts if part['part_type'] != 'PSU')
+        if psu and total_power_draw > psu['power_supplied']:
+            print("Warning: Total power draw exceeds PSU capacity.")
+            return False
+
+        return True
+
 
     def budget(self):
         # Allows a user to update their budget

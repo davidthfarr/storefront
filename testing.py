@@ -262,12 +262,28 @@ class computer_store:
         
         if requirements_met:
             if total_cost <= customer_budget:
-                print("Custom computer can be built!")
-                self.shopping_cart.append({
-                    'computer_name': 'Custom',
-                    'parts': computer_parts,
-                    'total_cost': total_cost
-                })
+            # Assemble the computer parts into a build configuration
+                computer_parts = []
+                for part_id in parts.split(','):
+                    part = self.find_part_by_id(part_id)
+                    if part:
+                        computer_parts.append(part)
+            # Check compatibility before adding to the cart
+                if self.check_compatibility(computer_parts):
+                    print("Custom computer can be built!")
+                    self.shopping_cart.append({
+                        'computer_name': 'Custom',
+                        'parts': computer_parts,
+                        'total_cost': total_cost
+                    })
+                else:
+                    print("The selected parts are not compatible. Please review your selection.")
+            else:
+                print("The total cost exceeds the customer's budget.")
+        else:
+            print(f"Missing parts: {', '.join(missing_parts)}")
+            
+
 
             
 

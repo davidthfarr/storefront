@@ -308,7 +308,7 @@ class computer_store:
             return False
 
         total_power_draw = sum(part['power_draw'] for part in build_parts if part['part_type'] != 'PSU')
-        if psu and total_power_draw > psu['power_supplied']:
+        if psliu and total_power_draw > psu['power_supplied']:
             print("Warning: Total power draw exceeds PSU capacity.")
             return False
 
@@ -323,16 +323,29 @@ class computer_store:
                 self.customer['budget'] = new_budget
                 print("Budget updated successfully!")
             except ValueError:
-                print("Invalid input for the budget. Please enter a valid number.")
-        else:
-            print("Customer information not found. Please set customer information first.")
-
-
+                print("Invalid input for the budget. Please enter a valid number.")        
+                
     def checkout(self):
         # Complete the purchase and checkout process
-        # Consider the budget and compatibility before finalizing the purchase
-        pass
+        if not self.shopping_cart:
+            print("Your shopping cart is empty.")
+            return
+        
+        # Extract the parts from the shopping cart
+        parts_in_cart = [item['part_details'] for item in self.shopping_cart]
 
+        total_cost = sum(item['part_details']['price'] for item in self.shopping_cart)
+
+        if self.customer:
+            if total_cost <= self.customer.get('budget', float('inf')):
+                print("Purchase successful! Thank you for shopping with us.")
+
+                #clear shopping cart
+                self.shopping_cart = []
+            else:
+                print("The total cost exceeds the customer's budget.")
+        else:
+            print("Customer information is not available. Please set the customer information with the")
 
 
 

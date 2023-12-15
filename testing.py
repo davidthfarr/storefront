@@ -1,7 +1,7 @@
 #import pandas as pd
 #import json
 #author David Farr
-#07 Dec 23
+#14 Dec 23
 
 class computer_store:
 
@@ -308,7 +308,7 @@ class computer_store:
             return False
 
         total_power_draw = sum(part['power_draw'] for part in build_parts if part['part_type'] != 'PSU')
-        if psliu and total_power_draw > psu['power_supplied']:
+        if psu and total_power_draw > psu['power_supplied']:
             print("Warning: Total power draw exceeds PSU capacity.")
             return False
 

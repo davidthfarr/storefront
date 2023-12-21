@@ -1,12 +1,13 @@
 import pandas as pd
 import json
+import sys
 #author David Farr
 #15 Dec 23
 
 class computer_store:
 
     def __init__(self, inventory_data):
-        self.inventory = self.load_inventory(inventory_data)
+        self.inventory = None
         self.shopping_cart = []
         self.customer = None
         self.df_cpu = None
@@ -15,6 +16,7 @@ class computer_store:
         self.df_psu = None
         self.df_motherboard = None
         self.df_storage = None
+        self.load_inventory(inventory_data)
 
     def load_inventory(self, inventory_data):
         # Parse inventory data and create component instances
@@ -54,47 +56,14 @@ class computer_store:
             print("Invalid input for budget. Please enter a valid number.")
             return None, None
 
-    def display_menu(self):
-        print("Welcome to the Computer Store!")
-        print("To view available parts enter list(), optional category is category = cpu, gpu, psu, ram, motherboard or storage as a string.")
-        print("To view shopping cart enter cart()")
-        print("To build custom computer enter build(part_ids comma separated)")
-        print("Remove Item from Cart with remove(part_ids)")
-        print("Set Budget with budget(amount = int)")
-        print("Add to the shopping cart with purchase(part_id)")
-        print("View the shopping cart with cart()")
-        print("Complete the purchase and checkout with checkout()")
-
-        print("Please begin the process by selecting one of the below options to begin your experience!")
-        print("1. View Available Parts")
-        print("2. View Shopping Cart")
-        print("3. Build Custom Computer")
-        print("4. Remove Item from Cart")
-        print("5. Set Budget")
-        print("6. Checkout")
-        print("7. Exit")
-
-
-        user_choice = input("Please enter your choice (1-7): ")
-
-        # Process user input
-        if user_choice == '1':
-            self.list()
-        elif user_choice == '2':
+    def execute_command(self, command):
+        if command.lower == 'help':
+            self.help()
+        elif command.lower == 'customer_info':
+            self.customer_info()
+        elif command.lower == 'cart':
             self.cart()
-        elif user_choice == '3':
-            self.build()
-        elif user_choice == '4':
-            self.remove()
-        elif user_choice == '5':
-            self.budget()
-        elif user_choice == '6':
-            self.checkout()
-        elif user_choice == '7':
-            print("Thank you for visiting. Goodbye!")
-            exit()
-        else:
-            print("Invalid choice. Please enter a number from 1 to 7.")
+        # Need to add list, details, purchase, remove, build, compatibility, budget, checkout, leave
 
     def help(self):
         print('The following commands are accepted:')
@@ -122,36 +91,45 @@ class computer_store:
                 print("--------------")
 
     def list(self, category=None):
-        # Format dataframes
-        self.df_cpu['price'] = self.df_cpu['price'].map('${:,.2f}'.format)
-        self.df_cpu['power_draw'] = self.df_cpu['power_draw'].map('{:,.1f}W'.format)        
-        self.df_gpu['price'] = self.df_gpu['price'].map('${:,.2f}'.format)
-        self.df_gpu['power_draw'] = self.df_gpu['power_draw'].map('{:,.1f}W'.format) 
-        self.df_ram['price'] = self.df_ram['price'].map('${:,.2f}'.format)
-        self.df_ram['power_draw'] = self.df_ram['power_draw'].map('{:,.1f}W'.format)
-        self.df_ram['capacity'] = self.df_ram['capacity'].map('{:,.0f}GB'.format)
-        self.df_psu['price'] = self.df_psu['price'].map('${:,.2f}'.format)
-        self.df_psu['power_supplied'] = self.df_psu['power_supplied'].map('{:,.1f}W'.format)
-        self.df_motherboard['price'] = self.df_motherboard['price'].map('${:,.2f}'.format)
-        self.df_motherboard['power_draw'] = self.df_motherboard['power_draw'].map('{:,.1f}W'.format)
-        self.df_storage['price'] = self.df_storage['price'].map('${:,.2f}'.format)
-        self.df_storage['capacity'] = self.df_storage['capacity'].map('{:,.0f}GB'.format)     
-              
+        # Create front facing dataframe
+        self.df_cpu_front =self.df_cpu
+        self.df_gpu_front =self.df_gpu
+        self.df_psu_front =self.df_psu
+        self.df_ram_front =self.df_ram
+        self.df_motherboard_front =self.df_motherboard
+        self.df_storage_front = self.df_storage
+        
+        #Format front facing data frames if not already completed
+        if not self.df_cpu['item_price'].dtype == 'object':
+            self.df_cpu_front['item_price'] = self.df_cpu_front['item_price'].map('${:,.2f}'.format)
+            self.df_cpu_front['item_power_draw'] = self.df_cpu_front['item_power_draw'].map('{:,.1f}W'.format)        
+            self.df_gpu_front['item_price'] = self.df_gpu_front['item_price'].map('${:,.2f}'.format)
+            self.df_gpu_front['item_power_draw'] = self.df_gpu_front['item_power_draw'].map('{:,.1f}W'.format) 
+            self.df_ram_front['item_price'] = self.df_ram_front['item_price'].map('${:,.2f}'.format)
+            self.df_ram_front['item_power_draw'] = self.df_ram_front['item_power_draw'].map('{:,.1f}W'.format)
+            self.df_ram_front['item_capacity'] = self.df_ram_front['item_capacity'].map('{:,.0f}GB'.format)
+            self.df_psu_front['item_price'] = self.df_psu_front['item_price'].map('${:,.2f}'.format)
+            self.df_psu_front['item_power_supplied'] = self.df_psu_front['item_power_supplied'].map('{:,.1f}W'.format)
+            self.df_motherboard_front['item_price'] = self.df_motherboard_front['item_price'].map('${:,.2f}'.format)
+            self.df_motherboard_front['item_power_draw'] = self.df_motherboard_front['item_power_draw'].map('{:,.1f}W'.format)
+            self.df_storage_front['item_price'] = self.df_storage_front['item_price'].map('${:,.2f}'.format)
+            self.df_storage_front['item_capacity'] = self.df_storage_front['item_capacity'].map('{:,.0f}GB'.format)     
+                  
         print("Available Parts:")
         if category is None:
             # Display all available parts if no specific category is specified
             print("---- CPU ----")
-            print(self.df_cpu)
+            print(self.df_cpu_front)
             print("---- GPU ----")
-            print(self.df_gpu)
+            print(self.df_gpu_front)
             print("---- RAM ----")
-            print(self.df_ram)
+            print(self.df_ram_front)
             print("---- PSU ----")
-            print(self.df_psu)
+            print(self.df_psu_front)
             print("---- Motherboard ----")
-            print(self.df_motherboard)
+            print(self.df_motherboard_front)
             print("---- Storage ----")
-            print(self.df_storage)
+            print(self.df_storage_front)
             # Display other component types in a similar manner for RAM, PSU, etc.
             # self.df_ram, self.df_psu, etc.
         else:
@@ -361,7 +339,15 @@ class computer_store:
         else:
             print("Customer information is not available. Please set the customer information with the customer_info() function.")
 
+    def leave():
+        exit()
 
+if __name__ == '__main__':
+    if len(sys.argv) !=2:
+        print("Usage: python computer_store.py inventory.json")
+        sys.exit(1)
+        
+    inventory_file = sys.argv[1]
 
-
-    
+    store = computer_store(inventory_file)
+    store.display_menu()

@@ -48,7 +48,8 @@ class computer_store:
         try:
             customer_budget = float(input("Please enter your budget: "))
             # Assuming the budget entered is a float value
-            return customer_name, customer_budget
+            customer_budget_format = "${:.2f}".format(customer_budget)
+            return customer_name, customer_budget_format
         except ValueError:
             print("Invalid input for budget. Please enter a valid number.")
             return None, None
@@ -121,6 +122,21 @@ class computer_store:
                 print("--------------")
 
     def list(self, category=None):
+        # Format dataframes
+        self.df_cpu['price'] = self.df_cpu['price'].map('${:,.2f}'.format)
+        self.df_cpu['power_draw'] = self.df_cpu['power_draw'].map('{:,.1f}W'.format)        
+        self.df_gpu['price'] = self.df_gpu['price'].map('${:,.2f}'.format)
+        self.df_gpu['power_draw'] = self.df_gpu['power_draw'].map('{:,.1f}W'.format) 
+        self.df_ram['price'] = self.df_ram['price'].map('${:,.2f}'.format)
+        self.df_ram['power_draw'] = self.df_ram['power_draw'].map('{:,.1f}W'.format)
+        self.df_ram['capacity'] = self.df_ram['capacity'].map('{:,.0f}GB'.format)
+        self.df_psu['price'] = self.df_psu['price'].map('${:,.2f}'.format)
+        self.df_psu['power_supplied'] = self.df_psu['power_supplied'].map('{:,.1f}W'.format)
+        self.df_motherboard['price'] = self.df_motherboard['price'].map('${:,.2f}'.format)
+        self.df_motherboard['power_draw'] = self.df_motherboard['power_draw'].map('{:,.1f}W'.format)
+        self.df_storage['price'] = self.df_storage['price'].map('${:,.2f}'.format)
+        self.df_storage['capacity'] = self.df_storage['capacity'].map('{:,.0f}GB'.format)     
+              
         print("Available Parts:")
         if category is None:
             # Display all available parts if no specific category is specified
@@ -280,6 +296,8 @@ class computer_store:
         cpu = next((part for part in build_parts if part['item_type'] == 'CPU'), None)
         ram = [part for part in build_parts if part['item_type'] == 'RAM']
         psu = next((part for part in build_parts if part['item_type'] == 'PSU'), None)
+        gpu = [part for part in build_parts if part['item_type'] == 'GPU']
+        storages = [part for part in build_parts if part['item_type'] == 'Storage']
 
         # Check compatibility rules
         if motherboard and cpu and motherboard['item_socket'] != cpu['item_socket']:
@@ -299,6 +317,13 @@ class computer_store:
         if motherboard and len(ram) > motherboard['item_ram_slots']:
             print("Warning: More RAM modules than available RAM slots on the motherboard.")
             return False
+        
+        if len(gpu) > 1:
+            print("Warning: Only one optional GPU is allowed.")
+            return False
+        
+        if len(storages) < 1 or len(storages) > 2:
+            print("Warning: 1-2 storage items are necessary for build.")
 
         return True
 
@@ -321,7 +346,7 @@ class computer_store:
             return
         
         # Extract the parts from the shopping cart
-        parts_in_cart = [item['part_details'] for item in self.shopping_cart]
+        #parts_in_cart = [item['part_details'] for item in self.shopping_cart]
 
         total_cost = sum(item['part_details']['price'] for item in self.shopping_cart)
 
@@ -334,7 +359,7 @@ class computer_store:
             else:
                 print("The total cost exceeds the customer's budget.")
         else:
-            print("Customer information is not available. Please set the customer information with the")
+            print("Customer information is not available. Please set the customer information with the customer_info() function.")
 
 
 

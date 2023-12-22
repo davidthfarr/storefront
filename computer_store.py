@@ -45,6 +45,29 @@ class computer_store:
         self.df_psu = grouped.get_group('PSU').dropna(axis='columns')
         self.df_motherboard = grouped.get_group('Motherboard').dropna(axis='columns')
         self.df_storage = grouped.get_group('Storage').dropna(axis='columns')
+        
+        # Create front facing dataframe
+        self.df_cpu_front = self.df_cpu.copy()
+        self.df_gpu_front = self.df_gpu.copy()
+        self.df_psu_front = self.df_psu.copy()
+        self.df_ram_front = self.df_ram.copy()
+        self.df_motherboard_front = self.df_motherboard.copy()
+        self.df_storage_front = self.df_storage.copy()
+        
+        #Format front facing data frames
+        self.df_cpu_front['item_price'] = self.df_cpu_front['item_price'].map('${:,.2f}'.format)
+        self.df_cpu_front['item_power_draw'] = self.df_cpu_front['item_power_draw'].map('{:,.1f}W'.format)        
+        self.df_gpu_front['item_price'] = self.df_gpu_front['item_price'].map('${:,.2f}'.format)
+        self.df_gpu_front['item_power_draw'] = self.df_gpu_front['item_power_draw'].map('{:,.1f}W'.format) 
+        self.df_ram_front['item_price'] = self.df_ram_front['item_price'].map('${:,.2f}'.format)
+        self.df_ram_front['item_power_draw'] = self.df_ram_front['item_power_draw'].map('{:,.1f}W'.format)
+        self.df_ram_front['item_capacity'] = self.df_ram_front['item_capacity'].map('{:,.0f}GB'.format)
+        self.df_psu_front['item_price'] = self.df_psu_front['item_price'].map('${:,.2f}'.format)
+        self.df_psu_front['item_power_supplied'] = self.df_psu_front['item_power_supplied'].map('{:,.1f}W'.format)
+        self.df_motherboard_front['item_price'] = self.df_motherboard_front['item_price'].map('${:,.2f}'.format)
+        self.df_motherboard_front['item_power_draw'] = self.df_motherboard_front['item_power_draw'].map('{:,.1f}W'.format)
+        self.df_storage_front['item_price'] = self.df_storage_front['item_price'].map('${:,.2f}'.format)
+        self.df_storage_front['item_capacity'] = self.df_storage_front['item_capacity'].map('{:,.0f}GB'.format)  
 
         return inventory_data #Return processed inventory data
 
@@ -86,9 +109,9 @@ class computer_store:
         elif command.lower() == 'details':
             part_id = input('Enter a part ID here: ')
             self.details(part_id)
-        elif command.lower() == 'purchase':
+        elif command.lower() == 'add_to_cart':
             part_id = input('Enter a part ID here: ')
-            self.purchase(part_id)
+            self.add_to_cart(part_id)
         elif command.lower() == 'remove':
             part_id = input('Enter ID of the part you would like removed from your cart here: ')
             self.remove(part_id)
@@ -107,19 +130,27 @@ class computer_store:
             self.checkout()
         elif command.lower() == 'leave':
             self.leave()
+        elif command.lower() == 'wallet':
+            self.wallet()
+        else:
+            print('The specified command was not accepted. Please do not add on any spaces or extra characters after entering a command. For more instructions please enter help.')
         # Need to add list, details, purchase, remove, build, compatibility, budget, checkout, leave
 
     def help(self):
         print('')
         print('The following commands are accepted:')
-        print('help - lists all available commands and their function.')
-        print('list - List available parts.')
-        print('details - Show details of a specified part. Part IDs ARE case sensitive.')
-        print('build - Enter parts with commas in between. Will check compatibility and then add all parts to cart for purchase.')
-        print('budget(amount)- set customers budget')
-        print('purchase(part_id)- Add the specified part to shopping cart. You will not be charged until checkout.')
-        print('cart(none)- View the current shopping cart')
-        print('checkout(none)- Complete the purchase and checkout')
+        print('help - lists all available commands and their function')
+        print('list - List available parts')
+        print('details - Show details of a specified part. Part IDs ARE case sensitive')
+        print('build - Enter parts with commas in between. Will check compatibility and then add all parts to cart for purchase')
+        print('budget - set customers budget')
+        print('customer_info - reset the customer name and budget')
+        print('add_to_cart - Add the specified part via PART_ID to shopping cart. You will not be charged until checkout')
+        print('remove - Delete a specified part ')
+        print('cart - View the current shopping cart')
+        print('wallet - Will show you the cost of items in your cart, your set budget, and your remaining bduget.')
+        print('checkout - Complete the purchase and checkout')
+        print('leave - Exits the store')
 
 
     def cart(self, category=None):
@@ -134,29 +165,7 @@ class computer_store:
                 print("--------------")
 
     def list(self, category=None):
-        # Create front facing dataframe
-        self.df_cpu_front =self.df_cpu
-        self.df_gpu_front =self.df_gpu
-        self.df_psu_front =self.df_psu
-        self.df_ram_front =self.df_ram
-        self.df_motherboard_front =self.df_motherboard
-        self.df_storage_front = self.df_storage
-        
-        #Format front facing data frames if not already completed
-        if not self.df_cpu['item_price'].dtype == 'object':
-            self.df_cpu_front['item_price'] = self.df_cpu_front['item_price'].map('${:,.2f}'.format)
-            self.df_cpu_front['item_power_draw'] = self.df_cpu_front['item_power_draw'].map('{:,.1f}W'.format)        
-            self.df_gpu_front['item_price'] = self.df_gpu_front['item_price'].map('${:,.2f}'.format)
-            self.df_gpu_front['item_power_draw'] = self.df_gpu_front['item_power_draw'].map('{:,.1f}W'.format) 
-            self.df_ram_front['item_price'] = self.df_ram_front['item_price'].map('${:,.2f}'.format)
-            self.df_ram_front['item_power_draw'] = self.df_ram_front['item_power_draw'].map('{:,.1f}W'.format)
-            self.df_ram_front['item_capacity'] = self.df_ram_front['item_capacity'].map('{:,.0f}GB'.format)
-            self.df_psu_front['item_price'] = self.df_psu_front['item_price'].map('${:,.2f}'.format)
-            self.df_psu_front['item_power_supplied'] = self.df_psu_front['item_power_supplied'].map('{:,.1f}W'.format)
-            self.df_motherboard_front['item_price'] = self.df_motherboard_front['item_price'].map('${:,.2f}'.format)
-            self.df_motherboard_front['item_power_draw'] = self.df_motherboard_front['item_power_draw'].map('{:,.1f}W'.format)
-            self.df_storage_front['item_price'] = self.df_storage_front['item_price'].map('${:,.2f}'.format)
-            self.df_storage_front['item_capacity'] = self.df_storage_front['item_capacity'].map('{:,.0f}GB'.format)     
+   
                   
         print("Available Parts:")
         if category is None:
@@ -202,7 +211,7 @@ class computer_store:
         category = None
 
         # Search for the part in different component DataFrames
-        for category_df in [self.df_cpu, self.df_gpu, self.df_ram, self.df_psu, self.df_motherboard, self.df_storage]:
+        for category_df in [self.df_cpu_front, self.df_gpu_front, self.df_ram_front, self.df_psu_front, self.df_motherboard_front, self.df_storage_front]:
             if part_id in category_df['item_id'].values:
                 part = category_df[category_df['item_id'] == part_id].iloc[0]
                 category = category_df['item_type'].iloc[0]
@@ -214,7 +223,7 @@ class computer_store:
         else:
             print(f"Part with ID {part_id} not found in inventory.")
 
-    def purchase(self, part_id):
+    def add_to_cart(self, part_id):
         part = self.find_part_by_id(part_id) # Call function to ID part
         if part:
             part_cost = part['item_price'] 
@@ -298,15 +307,17 @@ class computer_store:
         requirements_met = all(part_count[part_type] >= count for part_type, count in required_parts.items())
     
         if requirements_met:
-            customer_budget_float = float(customer_budget.replace('$', '').replace(',', ''))
-            if total_cost <= customer_budget_float:
+            #customer_budget_float = float(customer_budget.replace('$', '').replace(',', ''))
+            if total_cost <= customer_budget:
                 if self.compatibility(computer_parts):
                     print("Custom computer can be built!")
-                    self.shopping_cart.append({
-                        'computer_name': 'Custom',
-                        'parts': computer_parts,
-                        'total_cost': total_cost
-                    })
+                    for part_id, part in zip(parts.split(','), computer_parts):
+                        self.shopping_cart.append({
+                            'computer_name': 'Custom',
+                            'part_id': part_id,
+                            'part_details': part,
+                            'total_cost': total_cost # Store the details of the part in the cart'
+                        })
                 else:
                     print("The selected parts are not compatible. Please review your selection.")
             else:
@@ -377,12 +388,14 @@ class computer_store:
         #parts_in_cart = [item['part_details'] for item in self.shopping_cart]
 
         total_cost = sum(item['part_details']['item_price'] for item in self.shopping_cart)
+        total_cost_formatted = "${:.2f}".format(total_cost)
         budget_remaining = self.customer.get('budget', float('inf')) - total_cost
+        budget_remaining_formatted = "${:.2f}".format(budget_remaining)
         if self.customer:
             if total_cost <= self.customer.get('budget', float('inf')):
                 print("Purchase successful! Thank you for shopping with us.\n")
-                print("Your total purchase cost was: $" +str(total_cost))
-                print("You still $ %f  left in your budget if you would like to continue shopping!"%(budget_remaining))
+                print("Your total purchase cost was: " + total_cost_formatted)
+                print("You still have %s  left in your budget if you would like to continue shopping!"%(budget_remaining_formatted))
 
                 #clear shopping cart
                 self.shopping_cart = []
@@ -390,8 +403,22 @@ class computer_store:
                 print("The total cost exceeds the customer's budget.")
         else:
             print("Customer information is not available. Please set the customer information with the customer_info() function.")
+            
+    def wallet(self):
+        total_cost = sum(item['part_details']['item_price'] for item in self.shopping_cart)
+        total_cost_formatted = "${:.2f}".format(total_cost)
+        budget = self.customer.get('budget', float('inf'))
+        budget_formatted = "${:.2f}".format(budget)
+        budget_remaining = self.customer.get('budget', float('inf')) - total_cost
+        budget_remaining_formatted = "${:.2f}".format(budget_remaining)
+        
+        print('You set an initial budget of: ' + budget_formatted)
+        print('You have %s worth of parts in you cart.'%(total_cost_formatted))
+        print('You have %s left to purchase additional items.'%(budget_remaining_formatted))
+        
 
-    def leave():
+
+    def leave(self):
         exit()
 
 if __name__ == '__main__':

@@ -32,6 +32,9 @@ class computer_store:
         # Normalize the JSON data into a DataFrame
         df = pd.json_normalize(inventory_data, sep='_')
 
+        # Convert item_price column to int
+        df['item_price'] = df['item_price'].astype(int)
+
         # Creating another object using groupby
         grouped = df.groupby('item_type')
 
@@ -56,25 +59,65 @@ class computer_store:
             print("Invalid input for budget. Please enter a valid number.")
             return None, None
 
+        
+    def run(self):
+        print("Welcome to Pylandia's Computer Store! ")
+        
+        customer_name, customer_budget = self.customer_info()
+        self.customer = {'name': customer_name, 'budget': float(customer_budget.replace('$',''))}
+        
+        print("If you need a pace to start, enter the command 'help' to view a full list of commands and how to use them! ")
+        
+        while True:
+            user_input = input("Enter a command here: ")
+            if user_input.lower() == 'exit':
+                break   
+            self.execute_command(user_input)
+        
     def execute_command(self, command):
-        if command.lower == 'help':
+        if command.lower() == 'help':
             self.help()
-        elif command.lower == 'customer_info':
+        elif command.lower() == 'customer_info':
             self.customer_info()
-        elif command.lower == 'cart':
+        elif command.lower() == 'cart':
             self.cart()
+        elif command.lower() == 'list':
+            self.list()
+        elif command.lower() == 'details':
+            part_id = input('Enter a part ID here: ')
+            self.details(part_id)
+        elif command.lower() == 'purchase':
+            part_id = input('Enter a part ID here: ')
+            self.purchase(part_id)
+        elif command.lower() == 'remove':
+            part_id = input('Enter ID of the part you would like removed from your cart here: ')
+            self.remove(part_id)
+        elif command.lower() == 'remove':
+            part_id = input('Enter a part ID here: ')
+            self.remove()
+        elif command.lower() == 'build':
+            parts = input('Enter your computer parts as a comma separated list: ')
+            self.build(parts)
+        elif command.lower() == 'compatibility':
+            parts = input('Enter your computer parts as a comma separated list: ')
+            self.compatibility(parts)
+        elif command.lower() == 'budget':
+            self.budget()
+        elif command.lower() == 'checkout':
+            self.checkout()
+        elif command.lower() == 'leave':
+            self.leave()
         # Need to add list, details, purchase, remove, build, compatibility, budget, checkout, leave
 
     def help(self):
+        print('')
         print('The following commands are accepted:')
-        print('help() - lists all available commands and their function')
-        print('list(category=optional)- List available part and all their attributes (ID, type, etc.) in the specified category')
-        print('details(part_id)- Show details of the specified part')
-        print('compatibility(part_id1,part_id2,..)- Check if compatibility between specified parts')
-        print('build(part_ids comma seperated)- Remove specified part or computer from current shopping carts')
-        print('compatibiility-build(none)- Check compatibility between all parts in current build configuration')
+        print('help - lists all available commands and their function.')
+        print('list - List available parts.')
+        print('details - Show details of a specified part. Part IDs ARE case sensitive.')
+        print('build - Enter parts with commas in between. Will check compatibility and then add all parts to cart for purchase.')
         print('budget(amount)- set customers budget')
-        print('purchase(part_id)- Add the specified part to shopping cart')
+        print('purchase(part_id)- Add the specified part to shopping cart. You will not be charged until checkout.')
         print('cart(none)- View the current shopping cart')
         print('checkout(none)- Complete the purchase and checkout')
 
@@ -174,19 +217,20 @@ class computer_store:
     def purchase(self, part_id):
         part = self.find_part_by_id(part_id) # Call function to ID part
         if part:
-            part_cost = part['price'] 
-
+            part_cost = part['item_price'] 
+    
             if self.customer:
-                if self.customer['budget'] >= part_cost:
+                # Check total cost of the cart
+                total_cart_cost = sum(item['part_details']['item_price'] for item in self.shopping_cart)
+                
+                if self.customer['budget'] >= total_cart_cost + part_cost:
                     # Add the part to the shopping cart
                     self.shopping_cart.append({
                         'part_id': part_id,
                         'part_details': part  # Store the details of the part in the cart
                     })
-
-                    # Deduct the cost of the part from the customer's budget
-                    self.customer['budget'] -= part_cost
-                    print(f"Part ID: {part_id} added to the cart. Remaining budget: {self.customer['budget']}")
+    
+                    print(f"Part ID: {part_id} added to the cart. Total cart cost: ${total_cart_cost + part_cost}")
                 else:
                     print("Insufficient budget to purchase this part.")
             else:
@@ -212,7 +256,7 @@ class computer_store:
         for item in self.shopping_cart:
             if item['part_id'] == part_id:
                 self.shopping_cart.remove(item)
-                print(f"Part ID: {part_id} removed from the cart.")
+                print(f"Part ID: {part_id} removed from the cart.")               
                 found = True
                 break
 
@@ -229,13 +273,19 @@ class computer_store:
             'Storage': 1,
             'GPU': 0
         }
-
+    
         part_count = {part_type: 0 for part_type in required_parts}
         total_cost = 0
         computer_parts = []
-        customer_name, customer_budget = self.customer_info()
-        self.customer = {'name': customer_name, 'budget': customer_budget}
-
+    
+        # Check if customer info is available, if not, prompt for it
+        if not self.customer:
+            customer_name, customer_budget = self.customer_info()
+            self.customer = {'name': customer_name, 'budget': customer_budget}
+        else:
+            customer_name = self.customer['name']
+            customer_budget = self.customer['budget']
+    
         for part_id in parts.split(','):
             part = self.find_part_by_id(part_id.strip())
             if part:
@@ -244,15 +294,12 @@ class computer_store:
                     part_count[part_type] += 1
                     total_cost += part['item_price']
                     computer_parts.append(part)
-
+    
         requirements_met = all(part_count[part_type] >= count for part_type, count in required_parts.items())
-
+    
         if requirements_met:
-            customer_budget = self.customer.get('budget')
-            if customer_budget is None:
-                customer_budget = float('inf')
-
-            if total_cost <= customer_budget:
+            customer_budget_float = float(customer_budget.replace('$', '').replace(',', ''))
+            if total_cost <= customer_budget_float:
                 if self.compatibility(computer_parts):
                     print("Custom computer can be built!")
                     self.shopping_cart.append({
@@ -268,15 +315,18 @@ class computer_store:
             missing_parts = [f"{count - part_count[part_type]} {part_type}" for part_type, count in required_parts.items()
                              if part_count[part_type] < count]
             print(f"Missing parts: {', '.join(missing_parts)}")
-                
+
+  
+    #Internal function for checking computer compatibility during build function
     def compatibility(self, build_parts):
+        
         motherboard = next((part for part in build_parts if part['item_type'] == 'Motherboard'), None)
         cpu = next((part for part in build_parts if part['item_type'] == 'CPU'), None)
         ram = [part for part in build_parts if part['item_type'] == 'RAM']
         psu = next((part for part in build_parts if part['item_type'] == 'PSU'), None)
         gpu = [part for part in build_parts if part['item_type'] == 'GPU']
         storages = [part for part in build_parts if part['item_type'] == 'Storage']
-
+        
         # Check compatibility rules
         if motherboard and cpu and motherboard['item_socket'] != cpu['item_socket']:
             print("Warning: Motherboard and CPU socket types are incompatible.")
@@ -326,11 +376,13 @@ class computer_store:
         # Extract the parts from the shopping cart
         #parts_in_cart = [item['part_details'] for item in self.shopping_cart]
 
-        total_cost = sum(item['part_details']['price'] for item in self.shopping_cart)
-
+        total_cost = sum(item['part_details']['item_price'] for item in self.shopping_cart)
+        budget_remaining = self.customer.get('budget', float('inf')) - total_cost
         if self.customer:
             if total_cost <= self.customer.get('budget', float('inf')):
-                print("Purchase successful! Thank you for shopping with us.")
+                print("Purchase successful! Thank you for shopping with us.\n")
+                print("Your total purchase cost was: $" +str(total_cost))
+                print("You still $ %f  left in your budget if you would like to continue shopping!"%(budget_remaining))
 
                 #clear shopping cart
                 self.shopping_cart = []
@@ -350,4 +402,4 @@ if __name__ == '__main__':
     inventory_file = sys.argv[1]
 
     store = computer_store(inventory_file)
-    store.display_menu()
+    store.run()

@@ -72,16 +72,24 @@ class ComputerStore:
         return inventory_data #Return processed inventory data
 
     def get_customer_info(self):
-        '''Prompt user for customer information.'''
+        '''Prompt user for customer information. Will loop until a valid budget is inputted.'''
         customer_name = input("Please enter your name: ")
-        try:
-            customer_budget = float(input("Please enter your budget: "))
-            # Assuming the budget entered is a float value
-            customer_budget_format = "${:.2f}".format(customer_budget)
-            return customer_name, customer_budget_format
-        except ValueError:
-            print("Invalid input for budget. Please enter a valid number.")
-            return None, None
+        
+        while True:
+            try:
+                customer_budget = float(input("Please enter your budget: "))
+                # Assuming the budget entered is a float value
+                customer_budget_format = "${:.2f}".format(customer_budget)
+            
+                if customer_budget >= 0:
+                    return customer_name, customer_budget_format
+            
+                else:
+                    print("Invalid input for budget. Please enter a valid number.")
+                    customer_budget = float(input("Please enter your budget: "))
+                    
+            except ValueError:
+                print("Invalid input for budget. Please enter a valid number.")      
         
     def run(self):
         '''Main function to run the Computer Store.'''
@@ -231,28 +239,31 @@ class ComputerStore:
     def add_to_cart(self, part_id):
         '''Adds an item to the customers shopping cart based on its ID.'''
         part = self._find_part_by_id(part_id) # Call function to ID part
-        if part:
-            part_cost = part['item_price'] 
-    
-            if self.customer:
-                # Check total cost of the cart
-                total_cart_cost = sum(item['part_details']['item_price'] for item in self.shopping_cart)
-                
-                if self.customer['budget'] >= total_cart_cost + part_cost:
-                    # Add the part to the shopping cart
-                    self.shopping_cart.append({
-                        'part_id': part_id,
-                        'part_details': part  # Store the details of the part in the cart
-                    })
-    
-                    print(f"Part ID: {part_id} added to the cart. Total cart cost: ${total_cart_cost + part_cost}")
-                else:
-                    print("Insufficient budget to purchase this part.")
-            else:
-                print("Customer information is not available. Please set the customer's budget first.")
+        
+        if not part:
+            print('Part not found in in inventory.')
+            
         else:
-            print("Part not found in inventory.")
-   
+            part_cost = part['item_price']
+            
+        if not self.customer:
+            print("Customer information is not available. Please set the customer's budget first.")                  
+    
+        if self.customer:
+            # Check total cost of the cart
+            total_cart_cost = sum(item['part_details']['item_price'] for item in self.shopping_cart)
+            
+            if self.customer['budget'] >= total_cart_cost + part_cost:
+                # Add the part to the shopping cart
+                self.shopping_cart.append({
+                    'part_id': part_id,
+                    'part_details': part  # Store the details of the part in the cart
+                })
+
+                print(f"Part ID: {part_id} added to the cart. Total cart cost: ${total_cart_cost + part_cost}")
+            else:
+                print("Insufficient budget to purchase this part.")
+                             
     def _find_part_by_id(self, part_id):
         '''Internal logic to find and return part details based on ID from the inventory
         Return the part details if found, otherwise return None.'''

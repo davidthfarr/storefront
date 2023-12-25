@@ -326,6 +326,7 @@ class ComputerStore:
             if total_cost <= customer_budget:
                 if self._compatibility(computer_parts):
                     print("Custom computer can be built!")
+                    print("The parts for your customer computer have been added to your shopping cart!")
                     for part_id, part in zip(parts.split(','), computer_parts):
                         self.shopping_cart.append({
                             'computer_name': 'Custom',
@@ -406,6 +407,7 @@ class ComputerStore:
                 print("Purchase successful! Thank you for shopping with us.\n")
                 print("Your total purchase cost was: " + total_cost_formatted)
                 print("You still have %s  left in your budget if you would like to continue shopping!"%(budget_remaining_formatted))
+                self.customer['budget'] = budget_remaining
 
                 #clear shopping cart
                 self.shopping_cart = []
